@@ -9,16 +9,32 @@ function Card(rank, suit){
 Card.prototype.getValue = function(currentTotal){
 	var value = 0;
 
-	if (this.rank == 1 && currentTotal < 11){
+	if (this.rank == 'A' && currentTotal < 11){
 			value = 11;
-	} else if (this.rank == 1){
+	} else if (this.rank == 'A'){
 			value = 1;
-	} else if (this.rank == 11 || this.rank == 12 || this.rank == 13){
+	} else if (this.rank == 'J' || this.rank == 'Q' || this.rank == 'K'){
 			value = 10;
 	} else {
 			value = this.rank;
 	}
 	return value;
+}
+
+Card.prototype.view = function(){
+	var htmlEntities = {
+		'hearts' : '&#9829;',
+		'diamonds' : '&#9830;',
+		'clubs' : '&#9827;',
+		'spades' : '&#9824;'
+	}
+	return `
+		<div class="card ` + this.suit + `">
+			<div class="top-rank">` + this.rank + `</div>
+			<div class="suit">` + htmlEntities[this.suit] + `</div>
+			<div class="bottom-rank">` + this.rank + `</div>
+		</div>
+	`;
 }
 
 /*
@@ -51,8 +67,8 @@ Player.prototype.getPoints = function(){
 	Deck - Singleton class
 */
 var Deck = new function(){
-	this.ranks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-	this.suits = ['H', 'S', 'D','C'];
+	this.ranks = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
+	this.suits = ['hearts', 'spades', 'diamonds','clubs'];
   this.deck = [];
 
 	this.init = function(){
@@ -73,7 +89,16 @@ var Deck = new function(){
 		 }
 	}
 
-	this.deal = function(){
+}
+
+/*
+	Game - Singleton class
+*/
+var Game = new function(){
+	this.start = function(){
+
+		Deck.init();
+		Deck.shuffle();
 
 		var dealer = new Player([Deck.deck.pop()])
 		var player1 = new Player([Deck.deck.pop(), Deck.deck.pop()]);
@@ -84,19 +109,11 @@ var Deck = new function(){
 		console.log(dealer.getPoints());
 		console.log(player1.getPoints());
 
+		for(var i = 0; i < player1.showHand().length; i++){
+			document.getElementById('dealer').innerHTML += player1.showHand()[i].view();
+		}
 
-	}
 
-}
-
-/*
-	Game - Singleton class
-*/
-var Game = new function(){
-	this.start = function(){
-		Deck.init();
-		Deck.shuffle();
-		Deck.deal();
 	}
 }
 

@@ -30,9 +30,9 @@ Card.prototype.view = function(){
 	}
 	return `
 		<div class="card ` + this.suit + `">
-			<div class="top-rank">` + this.rank + `</div>
+			<div class="top rank">` + this.rank + `</div>
 			<div class="suit">` + htmlEntities[this.suit] + `</div>
-			<div class="bottom-rank">` + this.rank + `</div>
+			<div class="bottom rank">` + this.rank + `</div>
 		</div>
 	`;
 }
@@ -101,16 +101,20 @@ var Game = new function(){
 		Deck.shuffle();
 
 		var dealer = new Player([Deck.deck.pop()])
-		var player1 = new Player([Deck.deck.pop(), Deck.deck.pop()]);
+		var player = new Player([Deck.deck.pop(), Deck.deck.pop()]);
 
 		console.log(dealer.showHand());
-		console.log(player1.showHand());
+		console.log(player.showHand());
 
 		console.log(dealer.getPoints());
-		console.log(player1.getPoints());
+		console.log(player.getPoints());
 
-		for(var i = 0; i < player1.showHand().length; i++){
-			document.getElementById('dealer').innerHTML += player1.showHand()[i].view();
+		for(var i = 0; i < player.showHand().length; i++){
+			document.getElementById('player').innerHTML += player.showHand()[i].view();
+		}
+
+		for(var i = 0; i < dealer.showHand().length; i++){
+			document.getElementById('dealer').innerHTML += dealer.showHand()[i].view();
 		}
 
 

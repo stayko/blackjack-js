@@ -15,42 +15,83 @@ body {
   min-height: 100%;
 }
 
+#dealer{
+  position: relative;
+  width:100%;
+  margin-bottom: 100px;
+}
+
+#player{
+  position: relative;
+  width:100%;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 
 .card {
+  font-family: 'Arbutus Slab', serif;
   position: relative;
-  width: 80px;
-  height: 130px;
+  width: 120px;
+  height: 180px;
   border-radius: 5px;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 28px;
   padding:2px;
-  background-color: white;
-  display: inline-block;
+  background-color: #F6F7EB;
+  display: flex;
   -webkit-box-shadow: 2px -2px 9px -1px rgba(0,0,0,1);
   -moz-box-shadow: 2px -2px 9px -1px rgba(0,0,0,1);
   box-shadow: 2px -2px 9px -1px rgba(0,0,0,1);
-  margin-right:10px;
+  margin:15px;
+}
+
+.back {
+  background: #36c;
+  background:
+  linear-gradient(115deg, transparent 75%, rgba(255,255,255,.8) 75%) 0 0,
+  linear-gradient(245deg, transparent 75%, rgba(255,255,255,.8) 75%) 0 0,
+  linear-gradient(115deg, transparent 75%, rgba(255,255,255,.8) 75%) 7px -15px,
+  linear-gradient(245deg, transparent 75%, rgba(255,255,255,.8) 75%) 7px -15px,
+  #36c;
+  background-size: 15px 30px;
+  width:96%;
+  height: 98%;
+  margin: 1% auto;
+  border-radius: 5px;
 }
 
 .diamonds, .hearts {
-  color:red;
+  color:#E94F37;
 }
 
 .spades, .clubs {
-  color:black;
+  color:#393E41;
 }
 
-.top-rank {
-  text-align: left;
+.rank {
+  position: absolute;
+  width:30px;
+  height: 28px;
 }
 
-.bottom-rank {
+.top {
+  top: 2px;
+  left: 2px;
+}
+
+.bottom {
+  bottom:0;
+  right: 2px;
   text-align: right;
 }
 
 .suit {
-  padding-top:12px;
-  height: 74px;
-  font-size: 40px;
-  text-align: center;
+  margin:auto;
+  font-size: 60px;
 }

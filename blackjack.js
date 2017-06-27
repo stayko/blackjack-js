@@ -47,10 +47,9 @@ function Player(element, hand){
 
 Player.prototype.hit = function(card){
 	this.hand.push(card);
-	document.getElementById(this.element).innerHTML += card.view();
 }
 
-Player.prototype.getPoints = function(){
+Player.prototype.getScore = function(){
 	var points = 0;
 	for(var i = 0; i < this.hand.length; i++){
 		if(i == 0) points = this.hand[i].getValue(0);
@@ -60,9 +59,11 @@ Player.prototype.getPoints = function(){
 }
 
 Player.prototype.showHand = function(){
+	var hand = "";
 	for(var i = 0; i < this.hand.length; i++){
-		document.getElementById(this.element).innerHTML += this.hand[i].view();
+		 hand += this.hand[i].view();
 	}
+	return hand;
 }
 
 
@@ -99,25 +100,57 @@ var Deck = new function(){
 	Game - Singleton class
 */
 
-var dealer, player;
-
 var Game = new function(){
 
+	this.dealer;
+	this.player;
+	this.dealerScore;
+	this.playerScore;
+
+	var self = this;
+
 	this.init = function(){
+
 		Deck.init();
+
+		this.dealerScore = document.getElementById('dealer-score').getElementsByTagName("span")[0];
+		this.playerScore = document.getElementById('player-score').getElementsByTagName("span")[0];
+
+		var dealButton = document.getElementById('deal');
+		var hitButton = document.getElementById('hit');
+		var standButton = document.getElementById('stand');
+
+		dealButton.addEventListener('click', function(){
+
+			Game.start();
+
+			dealButton.classList.add('disabled');
+			hitButton.classList.remove('disabled');
+			standButton.classList.remove('disabled');
+
+			hitButton.addEventListener('click', function(){
+				var card = Deck.deck.pop();
+				self.player.hit(card);
+				document.getElementById(self.player.element).innerHTML += card.view();
+				self.playerScore.innerHTML = self.player.getScore();
+			});
+
+		});
+
 	}
 
 	this.start = function(){
 
-
 		Deck.shuffle();
 
-		dealer = new Player('dealer', [Deck.deck.pop()])
-		player = new Player('player', [Deck.deck.pop(), Deck.deck.pop()]);
+		this.dealer = new Player('dealer', [Deck.deck.pop()]);
+		this.player = new Player('player', [Deck.deck.pop(), Deck.deck.pop()]);
 
+		document.getElementById(this.dealer.element).innerHTML += this.dealer.showHand();
+		document.getElementById(this.player.element).innerHTML = this.player.showHand();
 
-		dealer.showHand();
-		player.showHand();
+		this.dealerScore.innerHTML = this.dealer.getScore();
+		this.playerScore.innerHTML = this.player.getScore();
 	}
 }
 
@@ -126,12 +159,3 @@ var Game = new function(){
 	Init
 */
 Game.init();
-
-var dealButton = document.getElementById('deal');
-var hitButton = document.getElementById('hit');
-var standButton = document.getElementById('stand');
-
-dealButton.addEventListener('click', Game.start);
-hitButton.addEventListener('click', function(){
-	player.hit(Deck.deck.pop());
-});

@@ -9,19 +9,25 @@
   </head>
   <body>
 
-    <div class="container" id="dealer">
-      <div class="card">
-        <div class="back"></div>
+    <div id="table">
+      <div id="dealer-score" class="score">Dealer score: <span>0</span></div>
+      <div class="container" id="dealer">
+        <div class="card">
+          <div class="back"></div>
+        </div>
+      </div>
+
+      <div class="border-line"></div>
+
+      <div id="player-score" class="score">Your score: <span>0</span></div>
+      <div class="container" id="player">
       </div>
     </div>
 
-    <div>
-      
-    </div>
-
-
-    <div class="container" id="player">
-
+    <div id="buttons">
+      <a href="#" id="deal" class="btn blue">DEAL</a>
+      <a href="#" id="hit" class="btn green" disabled>HIT</a>
+      <a href="#" id="stand" class="btn red" disabled>STAND</a>
     </div>
 
     <script type="text/javascript" src="blackjack.js"></script>

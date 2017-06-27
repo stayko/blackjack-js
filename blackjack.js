@@ -40,16 +40,14 @@ Card.prototype.view = function(){
 /*
 	Player class
 */
-function Player(hand){
+function Player(element, hand){
 	this.hand = hand;
+	this.element = element;
 }
 
 Player.prototype.hit = function(card){
 	this.hand.push(card);
-}
-
-Player.prototype.showHand = function(){
-	return this.hand;
+	document.getElementById(this.element).innerHTML += card.view();
 }
 
 Player.prototype.getPoints = function(){
@@ -59,6 +57,12 @@ Player.prototype.getPoints = function(){
 		else points += this.hand[i].getValue(points);
 	}
 	return points;
+}
+
+Player.prototype.showHand = function(){
+	for(var i = 0; i < this.hand.length; i++){
+		document.getElementById(this.element).innerHTML += this.hand[i].view();
+	}
 }
 
 
@@ -94,30 +98,26 @@ var Deck = new function(){
 /*
 	Game - Singleton class
 */
+
+var dealer, player;
+
 var Game = new function(){
+
+	this.init = function(){
+		Deck.init();
+	}
+
 	this.start = function(){
 
-		Deck.init();
+
 		Deck.shuffle();
 
-		var dealer = new Player([Deck.deck.pop()])
-		var player = new Player([Deck.deck.pop(), Deck.deck.pop()]);
-
-		console.log(dealer.showHand());
-		console.log(player.showHand());
-
-		console.log(dealer.getPoints());
-		console.log(player.getPoints());
-
-		for(var i = 0; i < player.showHand().length; i++){
-			document.getElementById('player').innerHTML += player.showHand()[i].view();
-		}
-
-		for(var i = 0; i < dealer.showHand().length; i++){
-			document.getElementById('dealer').innerHTML += dealer.showHand()[i].view();
-		}
+		dealer = new Player('dealer', [Deck.deck.pop()])
+		player = new Player('player', [Deck.deck.pop(), Deck.deck.pop()]);
 
 
+		dealer.showHand();
+		player.showHand();
 	}
 }
 
@@ -125,4 +125,13 @@ var Game = new function(){
 /*
 	Init
 */
-Game.start();
+Game.init();
+
+var dealButton = document.getElementById('deal');
+var hitButton = document.getElementById('hit');
+var standButton = document.getElementById('stand');
+
+dealButton.addEventListener('click', Game.start);
+hitButton.addEventListener('click', function(){
+	player.hit(Deck.deck.pop());
+});

@@ -11,10 +11,10 @@
 
     <div id="table">
       <div id="dealer-score" class="score">Dealer score: <span>0</span></div>
+      <div id="back-of-card">
+        <div class="back"></div>
+      </div>
       <div class="container" id="dealer">
-        <div class="card">
-          <div class="back"></div>
-        </div>
       </div>
 
       <div class="border-line"></div>
@@ -24,10 +24,13 @@
       </div>
     </div>
 
-    <div id="buttons">
-      <a href="#" id="deal" class="btn blue">DEAL</a>
-      <a href="#" id="hit" class="btn green disabled">HIT</a>
-      <a href="#" id="stand" class="btn red disabled">STAND</a>
+    <div id="panel">
+      <div id="status">Press Deal to start game</div>
+
+      <button id="deal" class="blue" type="button">DEAL</button>
+      <button id="hit" class="green" type="button" disabled>HIT</button>
+      <button id="stand" class="red" type="button" disabled>STAND</button>
+
     </div>
 
     <script type="text/javascript" src="blackjack.js"></script>

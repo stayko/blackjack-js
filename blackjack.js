@@ -74,9 +74,10 @@ Player.prototype.showHand = function(){
 var Deck = new function(){
 	this.ranks = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
 	this.suits = ['hearts', 'spades', 'diamonds','clubs'];
-  this.deck = [];
+  this.deck;
 
 	this.init = function(){
+		this.deck = []; //empty the array
 		for(var s = 0; s < this.suits.length; s++){
 	  	for(var r = 0; r < this.ranks.length; r++){
 	    	this.deck.push(new Card(this.ranks[r], this.suits[s]));
@@ -106,52 +107,102 @@ var Game = new function(){
 	this.player;
 	this.dealerScore;
 	this.playerScore;
+	this.dealButton;
+	this.hitButton;
+	this.standButton;
 
 	var self = this;
 
 	this.init = function(){
 
-		Deck.init();
-
 		this.dealerScore = document.getElementById('dealer-score').getElementsByTagName("span")[0];
 		this.playerScore = document.getElementById('player-score').getElementsByTagName("span")[0];
 
-		var dealButton = document.getElementById('deal');
-		var hitButton = document.getElementById('hit');
-		var standButton = document.getElementById('stand');
+		this.dealButton = document.getElementById('deal');
+		this.hitButton = document.getElementById('hit');
+		this.standButton = document.getElementById('stand');
 
-		dealButton.addEventListener('click', function(){
+		this.dealButton.addEventListener('click', function(){
 
 			Game.start();
+			self.dealButton.disabled = true;
+			self.hitButton.disabled = false;
+			self.standButton.disabled = false;
 
-			dealButton.classList.add('disabled');
-			hitButton.classList.remove('disabled');
-			standButton.classList.remove('disabled');
+		});
 
-			hitButton.addEventListener('click', function(){
+		this.hitButton.addEventListener('click', function(){
+
+			var card = Deck.deck.pop();
+			self.player.hit(card);
+			document.getElementById(self.player.element).innerHTML += card.view();
+			self.playerScore.innerHTML = self.player.getScore();
+			if(self.player.getScore() > 21){
+				self.gameEnded('You lost');
+			}
+
+		});
+
+		this.standButton.addEventListener('click', function(){
+			self.hitButton.disabled = true;
+			self.standButton.disabled = true;
+
+			var running = true;
+			while(running){
 				var card = Deck.deck.pop();
-				self.player.hit(card);
-				document.getElementById(self.player.element).innerHTML += card.view();
-				self.playerScore.innerHTML = self.player.getScore();
-			});
+				self.dealer.hit(card);
+				document.getElementById(self.dealer.element).innerHTML += card.view();
+				self.dealerScore.innerHTML = self.dealer.getScore();
+
+				if(self.dealer.getScore() == 21 && self.player.getScore() != 21){
+					self.gameEnded('You lost');
+					break;
+				} else if(self.dealer.getScore() == 21 && self.player.getScore() == 21){
+					self.gameEnded('Draw!');
+					break;
+				} else if(self.dealer.getScore() > 21 && self.player.getScore() <= 21){
+					self.gameEnded('You won');
+					break;
+				} else if(self.dealer.getScore() > self.player.getScore() && self.dealer.getScore() <= 21 && self.player.getScore() < 21){
+					self.gameEnded('You lost');
+					break;
+				}
+			}
 
 		});
 
 	}
 
 	this.start = function(){
-
+		Deck.init();
 		Deck.shuffle();
 
 		this.dealer = new Player('dealer', [Deck.deck.pop()]);
 		this.player = new Player('player', [Deck.deck.pop(), Deck.deck.pop()]);
 
-		document.getElementById(this.dealer.element).innerHTML += this.dealer.showHand();
+		document.getElementById(this.dealer.element).innerHTML = this.dealer.showHand();
 		document.getElementById(this.player.element).innerHTML = this.player.showHand();
 
 		this.dealerScore.innerHTML = this.dealer.getScore();
 		this.playerScore.innerHTML = this.player.getScore();
+
+		this.setMessage("Hit or Stand");
 	}
+
+	this.gameEnded = function(str){
+		this.setMessage(str);
+
+		this.dealButton.disabled = false;
+		this.hitButton.disabled = true;
+		this.standButton.disabled = true;
+
+	}
+
+	this.setMessage = function(str){
+		document.getElementById('status').innerHTML = str;
+	}
+
+
 }
 
 

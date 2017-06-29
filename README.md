@@ -3,7 +3,7 @@ Blackjack 21
 
 A recent trip to Vegas inspired me to create a simple Blackjack game in JavaScript.
 
-![alt text](http://imgur.com/a/xyUJI)
+![alt text](http://i.imgur.com/MppdhCb.png)
 
 Author
 ------

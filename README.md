@@ -1,5 +1,5 @@
-Blackjack 21
-=============
+Blackjack-JS version 1.0
+=========================
 
 A recent trip to Vegas inspired me to create a simple Blackjack game in JavaScript.
 

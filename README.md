@@ -8,7 +8,7 @@ A recent trip to Vegas inspired me to create a simple Blackjack game in JavaScri
 Author
 ------
 Stayko Chalakov
-chalakov88@gmail.com
+stayko16@yahoo.com
 
 About
 ------

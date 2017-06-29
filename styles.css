@@ -1,4 +1,10 @@
+/*
+  BlackjackJS CSS
 
+  @author Stayko Chalakov
+	@version 1.0
+	@date 29.06.2017
+*/
 html {
   height: 100%;
 }
@@ -150,6 +156,7 @@ body {
   font-size: 20px;
 }
 
+/* buttons */
 button {
   border:none;
   border-radius: 5px;

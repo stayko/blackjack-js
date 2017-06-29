@@ -1,11 +1,30 @@
 /*
+	Blackjack 21
+	@author Stayko Chalakov
+	@version 1.0
+	@date 29.06.2017
+*/
+
+
+/**************
 	Card class
+***************/
+
+/*
+	Constructor
+	@param {String or Number} rank
+	@param {String} suit
 */
 function Card(rank, suit){
 	this.rank = rank;
   this.suit = suit;
 }
 
+/*
+	Gets the value or points of the card
+	@param {Integer} currentTotal - The current total score of the
+	player's hand
+*/
 Card.prototype.getValue = function(currentTotal){
 	var value = 0;
 
@@ -21,6 +40,9 @@ Card.prototype.getValue = function(currentTotal){
 	return value;
 }
 
+/*******************
+	Renders the card
+*******************/
 Card.prototype.view = function(){
 	var htmlEntities = {
 		'hearts' : '&#9829;',
@@ -37,18 +59,33 @@ Card.prototype.view = function(){
 	`;
 }
 
-/*
+/*************************** End of Card class ********************************/
+
+/***************
 	Player class
+***************/
+
+/*
+	Constructor
+	@param {String} element - The DOM element
+	@param {Array} hand - the array which holds all the cards
 */
 function Player(element, hand){
 	this.hand = hand;
 	this.element = element;
 }
 
+/*
+	Hit player with new card from the deck
+	@param {Card} card - the card to deal to the player
+*/
 Player.prototype.hit = function(card){
 	this.hand.push(card);
 }
 
+/*
+	Returns the total score of all the cards in the hand of a player
+*/
 Player.prototype.getScore = function(){
 	var points = 0;
 	for(var i = 0; i < this.hand.length; i++){
@@ -58,6 +95,9 @@ Player.prototype.getScore = function(){
 	return points;
 }
 
+/*
+	Returns the array (hand) of cards
+*/
 Player.prototype.showHand = function(){
 	var hand = "";
 	for(var i = 0; i < this.hand.length; i++){
@@ -66,16 +106,19 @@ Player.prototype.showHand = function(){
 	return hand;
 }
 
+/*************************** End of Player class ******************************/
 
-
-/*
+/*************************
 	Deck - Singleton class
-*/
+*************************/
 var Deck = new function(){
 	this.ranks = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
 	this.suits = ['hearts', 'spades', 'diamonds','clubs'];
   this.deck;
 
+	/*
+		Fills up the deck array with cards
+	*/
 	this.init = function(){
 		this.deck = []; //empty the array
 		for(var s = 0; s < this.suits.length; s++){
@@ -85,6 +128,9 @@ var Deck = new function(){
 	  }
 	}
 
+	/*
+		Shuffles the cards in the deck randomly
+	*/
 	this.shuffle = function(){
 		 var j, x, i;
 		 for (i = this.deck.length; i; i--) {
@@ -97,9 +143,11 @@ var Deck = new function(){
 
 }
 
-/*
+/**************************** End of Deck class *******************************/
+
+/*************************
 	Game - Singleton class
-*/
+**************************/
 
 var Game = new function(){
 
@@ -113,66 +161,76 @@ var Game = new function(){
 
 	var self = this;
 
+	/*
+		Initialise
+	*/
 	this.init = function(){
-
 		this.dealerScore = document.getElementById('dealer-score').getElementsByTagName("span")[0];
 		this.playerScore = document.getElementById('player-score').getElementsByTagName("span")[0];
-
 		this.dealButton = document.getElementById('deal');
 		this.hitButton = document.getElementById('hit');
 		this.standButton = document.getElementById('stand');
 
+		/*
+			Deal button event handler
+		*/
 		this.dealButton.addEventListener('click', function(){
-
 			Game.start();
 			self.dealButton.disabled = true;
 			self.hitButton.disabled = false;
 			self.standButton.disabled = false;
-
 		});
 
+		/*
+			Hit button event handler
+		*/
 		this.hitButton.addEventListener('click', function(){
-
 			var card = Deck.deck.pop();
 			self.player.hit(card);
 			document.getElementById(self.player.element).innerHTML += card.view();
 			self.playerScore.innerHTML = self.player.getScore();
 			if(self.player.getScore() > 21){
-				self.gameEnded('You lost');
+				self.gameEnded('You lost!');
 			}
-
 		});
 
+		/*
+			Stand button event handler
+		*/
 		this.standButton.addEventListener('click', function(){
 			self.hitButton.disabled = true;
 			self.standButton.disabled = true;
 
-			var running = true;
-			while(running){
+			while(true){
 				var card = Deck.deck.pop();
 				self.dealer.hit(card);
 				document.getElementById(self.dealer.element).innerHTML += card.view();
 				self.dealerScore.innerHTML = self.dealer.getScore();
 
+				//Rule set
 				if(self.dealer.getScore() == 21 && self.player.getScore() != 21){
-					self.gameEnded('You lost');
+					self.gameEnded('You lost!');
 					break;
 				} else if(self.dealer.getScore() == 21 && self.player.getScore() == 21){
 					self.gameEnded('Draw!');
 					break;
 				} else if(self.dealer.getScore() > 21 && self.player.getScore() <= 21){
-					self.gameEnded('You won');
+					self.gameEnded('You won!');
 					break;
 				} else if(self.dealer.getScore() > self.player.getScore() && self.dealer.getScore() <= 21 && self.player.getScore() < 21){
-					self.gameEnded('You lost');
+					self.gameEnded('You lost!');
 					break;
 				}
+
 			}
 
 		});
 
 	}
 
+	/*
+		Start the game
+	*/
 	this.start = function(){
 		Deck.init();
 		Deck.shuffle();
@@ -189,24 +247,23 @@ var Game = new function(){
 		this.setMessage("Hit or Stand");
 	}
 
+	/*
+		If the player wins or looses
+	*/
 	this.gameEnded = function(str){
 		this.setMessage(str);
-
 		this.dealButton.disabled = false;
 		this.hitButton.disabled = true;
 		this.standButton.disabled = true;
 
 	}
 
+	/*
+		Instructions or status of game
+	*/
 	this.setMessage = function(str){
 		document.getElementById('status').innerHTML = str;
 	}
 
 
 }
-
-
-/*
-	Init
-*/
-Game.init();

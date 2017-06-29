@@ -25,10 +25,6 @@ body {
   padding-left:154px;
 }
 
-#player{
-
-}
-
 .container {
   display: flex;
   flex-wrap: wrap;
@@ -39,7 +35,7 @@ body {
   width:100%;
 }
 
-#back-of-card{
+#deck{
   top:55px;
   left:15px;
   z-index: 10;

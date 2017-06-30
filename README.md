@@ -1,4 +1,4 @@
-Blackjack-JS version 1.0
+Blackjack-JS version 1.1
 =========================
 
 A recent trip to Vegas inspired me to create a simple Blackjack game in JavaScript.

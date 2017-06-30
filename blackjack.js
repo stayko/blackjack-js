@@ -16,7 +16,7 @@ var BlackjackJS = (function() {
 
 	/*
 		Constructor
-		@param {String or Number} rank
+		@param {String} rank
 		@param {String} suit
 	*/
 	function Card(rank, suit){
@@ -39,7 +39,7 @@ var BlackjackJS = (function() {
 		} else if (this.rank == 'J' || this.rank == 'Q' || this.rank == 'K'){
 				value = 10;
 		} else {
-				value = this.rank;
+				value = parseInt(this.rank);
 		}
 		return value;
 	}
@@ -116,7 +116,7 @@ var BlackjackJS = (function() {
 		Deck - Singleton class
 	*************************/
 	var Deck = new function(){
-		this.ranks = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
+		this.ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 		this.suits = ['hearts', 'spades', 'diamonds','clubs'];
 	  this.deck;
 
@@ -125,8 +125,8 @@ var BlackjackJS = (function() {
 		*/
 		this.init = function(){
 			this.deck = []; //empty the array
-			for(var s = 0; s < this.suits.length; s++){
-		  	for(var r = 0; r < this.ranks.length; r++){
+			for(var s = 3; s >= 0; s--){
+		  	for(var r = 12; r >= 0; r--){
 		    	this.deck.push(new Card(this.ranks[r], this.suits[s]));
 		    }
 		  }
@@ -155,82 +155,86 @@ var BlackjackJS = (function() {
 
 	var Game = new function(){
 
-		//for accessing the correct context
-		//in the event handler functions and Game.init
-		var self = this;
+		/*
+			Deal button event handler
+		*/
+		this.dealButtonHandler = function(){
+			Game.start();
+			this.dealButton.disabled = true;
+			this.hitButton.disabled = false;
+			this.standButton.disabled = false;
+		}
 
+		/*
+			Hit button event handler
+		*/
+		this.hitButtonHandler = function(){
+			//deal a card and add to player's hand
+			var card = Deck.deck.pop();
+			this.player.hit(card);
+
+			//render the card and score
+			document.getElementById(this.player.element).innerHTML += card.view();
+			this.playerScore.innerHTML = this.player.getScore();
+
+			//if over, then player looses
+			if(this.player.getScore() > 21){
+				this.gameEnded('You lost!');
+			}
+		}
+
+		/*
+			Stand button event handler
+		*/
+		this.standButtonHandler = function(){
+			this.hitButton.disabled = true;
+			this.standButton.disabled = true;
+
+			//deals a card to the dealer until
+			//one of the conditions below is true
+			while(true){
+				var card = Deck.deck.pop(),
+						playerBlackjack = this.player.getScore() == 21,
+						dealerBlackjack = this.dealer.getScore() == 21;
+
+				this.dealer.hit(card);
+				document.getElementById(this.dealer.element).innerHTML += card.view();
+				this.dealerScore.innerHTML = this.dealer.getScore();
+
+				//Rule set
+				switch (true) {
+					case dealerBlackjack && !playerBlackjack:
+							this.gameEnded('You lost!');
+							return;
+					case dealerBlackjack && playerBlackjack:
+							this.gameEnded('Draw!');
+							return;
+					case this.dealer.getScore() > 21 && this.player.getScore() <= 21:
+							this.gameEnded('You won!');
+							return;
+					case this.dealer.getScore() > this.player.getScore() && this.dealer.getScore() <= 21 && this.player.getScore() < 21:
+							this.gameEnded('You lost!');
+							return;
+				}
+
+				//TODO needs to be expanded..
+
+			}
+		}
 		/*
 			Initialise
 		*/
 		this.init = function(){
-			self.dealerScore = document.getElementById('dealer-score').getElementsByTagName("span")[0];
-			self.playerScore = document.getElementById('player-score').getElementsByTagName("span")[0];
-			self.dealButton = document.getElementById('deal');
-			self.hitButton = document.getElementById('hit');
-			self.standButton = document.getElementById('stand');
+			this.dealerScore = document.getElementById('dealer-score').getElementsByTagName("span")[0];
+			this.playerScore = document.getElementById('player-score').getElementsByTagName("span")[0];
+			this.dealButton = document.getElementById('deal');
+			this.hitButton = document.getElementById('hit');
+			this.standButton = document.getElementById('stand');
 
-			/*
-				Deal button event handler
-			*/
-			self.dealButton.addEventListener('click', function(){
-				Game.start();
-				self.dealButton.disabled = true;
-				self.hitButton.disabled = false;
-				self.standButton.disabled = false;
-			});
-
-			/*
-				Hit button event handler
-			*/
-			self.hitButton.addEventListener('click', function(){
-				//deal a card and add to player's hand
-				var card = Deck.deck.pop();
-				self.player.hit(card);
-
-				//render the card and score
-				document.getElementById(self.player.element).innerHTML += card.view();
-				self.playerScore.innerHTML = self.player.getScore();
-
-				//if over, then player looses
-				if(self.player.getScore() > 21){
-					self.gameEnded('You lost!');
-				}
-			});
-
-			/*
-				Stand button event handler
-			*/
-			self.standButton.addEventListener('click', function(){
-				self.hitButton.disabled = true;
-				self.standButton.disabled = true;
-
-				//deals a card to the dealer until
-				//one of the conditions below is true
-				while(true){
-					var card = Deck.deck.pop();
-					self.dealer.hit(card);
-					document.getElementById(self.dealer.element).innerHTML += card.view();
-					self.dealerScore.innerHTML = self.dealer.getScore();
-
-					//Rule set
-					if(self.dealer.getScore() == 21 && self.player.getScore() != 21){
-						self.gameEnded('You lost!');
-						break;
-					} else if(self.dealer.getScore() == 21 && self.player.getScore() == 21){
-						self.gameEnded('Draw!');
-						break;
-					} else if(self.dealer.getScore() > 21 && self.player.getScore() <= 21){
-						self.gameEnded('You won!');
-						break;
-					} else if(self.dealer.getScore() > self.player.getScore() && self.dealer.getScore() <= 21 && self.player.getScore() < 21){
-						self.gameEnded('You lost!');
-						break;
-					}
-					//TODO needs to be expanded..
-
-				}
-
-			});
+			//attaching event handlers
+			this.dealButton.addEventListener('click', this.dealButtonHandler.bind(this));
+			this.hitButton.addEventListener('click', this.hitButtonHandler.bind(this));
+			this.standButton.addEventListener('click', this.standButtonHandler.bind(this));
 
 		}
 
@@ -284,7 +288,7 @@ var BlackjackJS = (function() {
 	//Exposing the Game.init function
 	//to the outside world
 	return {
-		init: Game.init
+		init: Game.init.bind(Game)
 	}
 
 })()

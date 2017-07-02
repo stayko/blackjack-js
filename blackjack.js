@@ -193,30 +193,29 @@ var BlackjackJS = (function() {
 			//deals a card to the dealer until
 			//one of the conditions below is true
 			while(true){
-				var card = Deck.deck.pop(),
-						playerBlackjack = this.player.getScore() == 21,
-						dealerBlackjack = this.dealer.getScore() == 21;
+				var card = Deck.deck.pop();
 
 				this.dealer.hit(card);
 				document.getElementById(this.dealer.element).innerHTML += card.view();
 				this.dealerScore.innerHTML = this.dealer.getScore();
 
-				//Rule set
-				switch (true) {
-					case dealerBlackjack && !playerBlackjack:
-							this.gameEnded('You lost!');
-							return;
-					case dealerBlackjack && playerBlackjack:
-							this.gameEnded('Draw!');
-							return;
-					case this.dealer.getScore() > 21 && this.player.getScore() <= 21:
-							this.gameEnded('You won!');
-							return;
-					case this.dealer.getScore() > this.player.getScore() && this.dealer.getScore() <= 21 && this.player.getScore() < 21:
-							this.gameEnded('You lost!');
-							return;
-				}
+				var playerBlackjack = this.player.getScore() == 21,
+						dealerBlackjack = this.dealer.getScore() == 21;
 
+				//Rule set
+				if(dealerBlackjack && !playerBlackjack) {
+						this.gameEnded('You lost!');
+						break;
+				} else if(dealerBlackjack && playerBlackjack) {
+						this.gameEnded('Draw!');
+						break;
+				} else if(this.dealer.getScore() > 21 && this.player.getScore() <= 21) {
+						this.gameEnded('You won!');
+						break;
+				} else if(this.dealer.getScore() > this.player.getScore() && this.dealer.getScore() <= 21 && this.player.getScore() < 21) {
+						this.gameEnded('You lost!');
+						break;
+				}
 				//TODO needs to be expanded..
 
 			}

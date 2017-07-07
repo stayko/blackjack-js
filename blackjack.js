@@ -290,4 +290,4 @@ var BlackjackJS = (function() {
 		init: Game.init.bind(Game)
 	}
 
-})()
+})() 
